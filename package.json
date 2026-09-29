@@ -1,0 +1,12 @@
+{
+  "name": "echo-chamber",
+  "private": true,
+  "workspaces": ["frontend"],
+  "scripts": {
+    "dev": "npm run dev --workspace echo-chamber-frontend",
+    "build": "npm run build --workspace echo-chamber-frontend",
+    "lint": "npm run lint --workspace echo-chamber-frontend",
+    "dev:api": "cd backend && .venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --port 8010",
+    "test:api": "cd backend && .venv\\Scripts\\python.exe -m pytest -q"
+  }
+}

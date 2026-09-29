@@ -1,0 +1,10 @@
+const BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8010";
+export type DebateTurn = { agent: "supporter" | "opposer" | "judge"; round: number; argument: string; strongest_point: string; weaknesses_found: string[] };
+export type DebateVerdict = { decision: "proceed" | "proceed_with_changes" | "do_not_proceed"; confidence: number; reasoning: string; conditions: string[]; memory_influence: string };
+export type Debate = { id: string; topic: string; description: string; rounds: number; created_at: string; turns: DebateTurn[]; verdict: DebateVerdict | null; memory_used: Memory[] };
+export type Decision = { id: string; title: string; description: string; status: string; created_at: string; assumptions?: Assumption[]; analysis?: Analysis };
+export type Assumption = { id: string; statement: string; confidence: number; importance: string; validation_method: string };
+export type Memory = { id: string; kind: string; text: string; impact: string; source_decision_id?: string };
+export type Analysis = { confidence: number; recommendation: string; experiments: string[]; risks: { title: string; severity: string; detail: string }[]; memory_used: Memory[]; without_memory: string; with_memory: string };
+async function request<T>(path: string, init?: RequestInit): Promise<T> { const response = await fetch(`${BASE}${path}`, { headers: { "Content-Type": "application/json" }, ...init }); if (!response.ok) { const data = await response.json().catch(() => ({})); throw new Error(data.detail ?? "Something went wrong."); } return response.json(); }
+export const api = { decisions: () => request<Decision[]>("/api/decisions"), create: (body: object) => request<Decision>("/api/decisions", { method: "POST", body: JSON.stringify(body) }), analyze: (id: string) => request<Decision>(`/api/decisions/${id}/analyze`, { method: "POST" }), demo: () => request<unknown>("/api/demo/load", { method: "POST" }), debates: () => request<Debate[]>("/api/debates"), createDebate: (body: { topic: string; description: string; rounds: number }) => request<Debate>("/api/debates", { method: "POST", body: JSON.stringify(body) }) };

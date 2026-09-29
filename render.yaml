@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: echo-chamber-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: HINDSIGHT_API_KEY
+        sync: false
+      - key: HINDSIGHT_BASE_URL
+        value: https://api.hindsight.vectorize.io
+      - key: HINDSIGHT_BANK_ID
+        value: echo-chamber-demo
+      - key: LLM_API_KEY
+        sync: false
+      - key: LLM_MODEL
+        value: openai/gpt-oss-120b
+      - key: LLM_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: CORS_ORIGINS
+        value: http://localhost:3000
